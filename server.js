@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var User = require('./user');
 var Movie = require('./movies');
+var Reviews = require('./reviews')
 var cors= require('cors');
 module.exports = app; // for testing
 const http = require('http');
@@ -131,15 +132,52 @@ router.route('/postjwt')
 router.route('/movies')
     .get(authJwtController.isAuthenticated,function(req,res)
     {
-        if(true)
+        let reviews = req.query.reviews == "true"
+        if(reviews)
         {
+            Movie.aggregate
+            ([
+                
+            {
+                $match :{title:req.body.title}
+            },
+
+            {
+                $lookup:
+                {
+                    from : "reviews",
+                    localField:"title",
+                    foreignField: "title",
+                    as: "Movies_reviews"
+
+                }
+            },
+
+            {
+                $addFields:{
+                    ReviewNum: {$avg: "Movie_Reviews.rating"}
+                }
+            }
+
+            ]).exec(function(err,movie){
+                if(error)
+                {
+                    return res.json(error)
+                }
+                else 
+                {
+                    return res.json(movie)
+                }
+            })
+
+        }
             Movie.find({},function(err,movies)
             {
                 if(err){res.send(err);}
                 res.json({Movie:movies});
             });
             
-        }
+        
     })
 
 
@@ -253,7 +291,47 @@ router.route('/movies')
 
 
     });
-    
+
+router.route('/reviews')
+.post(authJwtController.isAuthenticated,function(req,res)
+    {
+        if(!req.body.Movietitle|| !req.body.ReviewerName|| !req.body.SmallQuote|| !req.body.Rating)
+        {
+            res.json({success:false,msg:'Provide movie title, the Year the Movie Released, the Genre, and Actors(Character they Played and Actors real name)'});
+
+        }
+        else
+        {
+                var review = new Reviews();
+                review.Movietitle = req.body.Movietitle
+                review.ReviewerName = req.body.ReviewerName;
+                review.SmallQuote = req.body.SmallQuote;
+                review.Rating = req.body.Rating;
+                
+                review.save(function(error)
+                {
+                    if (error)
+                    {
+                        if(error.code==11000)
+                            return res.json({success:false,msg:'Movie Title Already exists in DB'});
+                        else
+                            return res.send(error);
+                    }
+
+                    res.json({msg:'Review has been added'});
+
+                });
+
+  
+        
+        }
+
+
+
+
+    })
+
+
 
 app.use('/', router);
 app.use(function (req, res) {
