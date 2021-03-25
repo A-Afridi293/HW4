@@ -183,9 +183,9 @@ router.route('/movies/:movie_title')
             })
 
         }
-            Movie.find({},function(err,movies)
+            Movie.find({},function(error,movies)
             {
-                if(err){res.send(err);}
+                if(error){res.send(error);}
                 res.json({Movie:movies});
             });
             
