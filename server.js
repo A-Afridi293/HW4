@@ -129,15 +129,27 @@ router.route('/postjwt')
             })
         })
     });
-router.route('/movies')
+router.route('/movies/:movie_title')
     .get(authJwtController.isAuthenticated,function(req,res)
     {
-        let reviews = req.query.reviews == "true"
+
+        let reviews = req.query.reviews == "true";
         if(reviews)
         {
+            Movie.findOne({title: req.params.movie_title},function(error,movie)
+            {
+                if (error){
+                    return res.status(403).json({succes: false, msg:"Cannot get reviews"});
+                }
+                else if (!movie){
+                    return res.status(403).json({succes: false, msg:"Movie title cannot be found"});
+                }                 
+
+
+            })
             Movie.aggregate
             ([
-                
+
             {
                 $match :{title:req.body.title}
             },
@@ -159,14 +171,14 @@ router.route('/movies')
                 }
             }
 
-            ]).exec(function(err,movie){
+            ]).exec(function(error,movie){
                 if(error)
                 {
-                    return res.json(error)
+                    return res.status(403).json({succes: false, msg:"Cannot get reviews"});
                 }
                 else 
                 {
-                    return res.json(movie)
+                    return res.status(200).json({succes: true, msg:"Movie title passed in and its review were.",move:mov});
                 }
             })
 
@@ -297,13 +309,24 @@ router.route('/reviews')
     {
         if(!req.body.Movietitle|| !req.body.ReviewerName|| !req.body.SmallQuote|| !req.body.Rating)
         {
-            res.json({success:false,msg:'Provide movie title, the Year the Movie Released, the Genre, and Actors(Character they Played and Actors real name)'});
+            res.json({success:false,msg:'Provide review'});
 
         }
         else
         {
                 var review = new Reviews();
-                review.Movietitle = req.body.Movietitle
+                jwt.verify(req.headers.authorization.substring(4),process.env.SECRET_KEY, function(error, ver_res){
+
+                    if(error){
+                        return res.status(403).json({succes: false, msg:"Unable to send movies"});
+                    }
+                    else if(!movie)
+                    {
+
+                        review.user_id = ver_res.id
+                    }
+                    else{
+                review.Movietitle = req.body.Movietitle;
                 review.ReviewerName = req.body.ReviewerName;
                 review.SmallQuote = req.body.SmallQuote;
                 review.Rating = req.body.Rating;
@@ -313,7 +336,7 @@ router.route('/reviews')
                     if (error)
                     {
                         if(error.code==11000)
-                            return res.json({success:false,msg:'Movie Title Already exists in DB'});
+                            return res.json({success:false,msg:'Review Title Already exists in DB'});
                         else
                             return res.send(error);
                     }
@@ -321,12 +344,11 @@ router.route('/reviews')
                     res.json({msg:'Review has been added'});
 
                 });
+                }
 
+                })   
   
-        
         }
-
-
 
 
     })

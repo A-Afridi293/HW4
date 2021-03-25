@@ -8,7 +8,8 @@ mongoose.Promise = global.Promise;
 try {
     mongoose.connect( process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true}, () =>
     console.log("connected"));
-    }catch (error) {
+    }
+catch (error) {
     console.log("could not connect");
     }
 mongoose.set("useCreateIndex", true);
@@ -18,7 +19,9 @@ var ReviewSchema = new Schema({
     Movietitle: [{ type: String, required: true, ref:"Movie" }],
     ReviewerName: {type: String, required: true },
     SmallQuote:{type: String, required: true},
-    Rating:{type:Number, max:5,min:1, required:true}
+    Rating:{type:Number, max:5,min:1, required:true},
+    user_id:{type:Schema.Types.ObjectID,ref:UserSchema},
+    movie_id:{type:Schema.Types.ObjectID,refl:MovieSchema}
  
 });
 
