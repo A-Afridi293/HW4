@@ -305,7 +305,7 @@ router.route('/movies/:movie_title')
     });
 
 router.route('/reviews')
-.post(authJwtController.isAuthenticated,function(req,res)
+    .post(authJwtController.isAuthenticated,function(req,res)
     {
         if(!req.body.Movietitle|| !req.body.ReviewerName|| !req.body.SmallQuote|| !req.body.Rating)
         {
@@ -315,7 +315,8 @@ router.route('/reviews')
         else
         {
                 var review = new Reviews();
-                jwt.verify(req.headers.authorization.substring(4),process.env.SECRET_KEY, function(error, ver_res){
+                jwt.verify(req.headers.authorization.substring(4),process.env.SECRET_KEY, function(error, ver_res)
+                {
 
                     if(error){
                         return res.status(403).json({succes: false, msg:"Unable to send movies"});
@@ -346,12 +347,12 @@ router.route('/reviews')
                 });
                 }
 
-                })   
+                });   
   
         }
 
 
-    })
+    });
 
 
 
