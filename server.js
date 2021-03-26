@@ -304,57 +304,80 @@ router.route('/movies/:movie_title')
 
     });
 
+
 router.route('/reviews')
     .post(authJwtController.isAuthenticated,function(req,res)
-    {
-        if(!req.body.Movietitle|| !req.body.ReviewerName|| !req.body.SmallQuote|| !req.body.Rating)
+    { 
+        if(!req.body.Movietitle||req.body.ReviewerName||!req.body.SmallQuote||!req.body.Rating)
         {
-            res.json({success:false,msg:'Provide review'});
-
+            res.json({success:false,msg:'Please Include all required fields'});
         }
         else
         {
-                var review = new Reviews();
-                jwt.verify(req.headers.authorization.substring(4),process.env.SECRET_KEY, function(error, ver_res)
+            var review = new Reviews();
+
+            jwt.verify(req.headers.authorization.substring(4),process.env.SECRET_KEY,function(error,ver_res)
+            {
+                if(error)
                 {
+                    return res.status(403).json({success:false, message:"Review cannot be passed"});
 
-                    if(error){
-                        return res.status(403).json({succes: false, msg:"Unable to send movies"});
-                    }
-                    else if(!movie)
-                    {
-
-                        review.user_id = ver_res.id;
-                    }
-                    else{
-                review.Movietitle = req.body.Movietitle;
-                review.ReviewerName = req.body.ReviewerName;
-                review.SmallQuote = req.body.SmallQuote;
-                review.Rating = req.body.Rating;
-                
-                review.save(function(error)
+                }
+                else
                 {
-                    if (error)
+                    review.user_id = ver_res.id;
+                    Movie.findOne({title:req.body.Movietitle},function(error,movie)
                     {
-                        if(error.code==11000){
-                            return res.json({success:false,msg:'Review Title Already exists in DB'});
+                        if(error)
+                        {
+                            return res.status(403).json({success:false, message:"Cannot post title"});
                         }
-                        else{
-                            return res.send(error);
+
+                        else if(!movie)
+                        {
+                            return res.status(403).json({success:false, message:"Cannot find title"});
                         }
-                    }
 
-                    res.json({msg:'Review has been added'});
+                        else
+                        {
 
-                });
+                            review.Movietitle = req.body.Movietitle;
+                            review.ReviewerName = req.body.ReviewerName;
+                            review.SmallQuote = req.body.SmallQuote;
+                            review.Rating = req.body.Rating;
+
+                            review.save(function(error)
+                            {
+                                if(error)
+                                {
+                                return res.status(403).json({success:false, message:"Cannot post title"});
+                                }
+                                else
+                                {
+                                    return res.status(200).json({sucess: true, message:"Review succesfully posted", movie:movie});
+                                }
+                            })
+
+                        }
+
+
+
+                    });
                 }
 
-                });   
-  
+            });
         }
+        
 
 
-    });
+
+
+
+
+
+
+
+    })
 
 
 
