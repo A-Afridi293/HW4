@@ -324,7 +324,7 @@ router.route('/reviews')
                     else if(!movie)
                     {
 
-                        review.user_id = ver_res.id
+                        review.user_id = ver_res.id;
                     }
                     else{
                 review.Movietitle = req.body.Movietitle;
