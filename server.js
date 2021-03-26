@@ -336,10 +336,12 @@ router.route('/reviews')
                 {
                     if (error)
                     {
-                        if(error.code==11000)
+                        if(error.code==11000){
                             return res.json({success:false,msg:'Review Title Already exists in DB'});
-                        else
+                        }
+                        else{
                             return res.send(error);
+                        }
                     }
 
                     res.json({msg:'Review has been added'});
