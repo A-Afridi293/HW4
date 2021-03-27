@@ -308,7 +308,7 @@ router.route('/movies/:movie_title')
 router.route('/reviews')
     .post(authJwtController.isAuthenticated,function(req,res)
     { 
-        if(!req.body.Movietitle||req.body.ReviewerName||!req.body.SmallQuote||!req.body.Rating)
+        if(!req.body.Movietitle||!req.body.ReviewerName||!req.body.SmallQuote||!req.body.Rating)
         {
             res.json({success:false,msg:'Please Include all required fields'});
         }
