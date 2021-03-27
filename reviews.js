@@ -20,8 +20,8 @@ var ReviewSchema = new Schema({
     ReviewerName: {type: String, required: true },
     SmallQuote:{type: String, required: true},
     Rating:{type:Number, max:5,min:1, required:true},
-    user_id:{type:Schema.Types.ObjectID,ref:UserSchema},
-    movie_id:{type:Schema.Types.ObjectID,refl:MovieSchema}
+    user_id:{type:Schema.Types.ObjectID,ref:"User"},
+    movie_id:{type:Schema.Types.ObjectID,ref:"Movies"}
  
 });
 
