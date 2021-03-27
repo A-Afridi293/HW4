@@ -16,7 +16,7 @@ mongoose.set("useCreateIndex", true);
 
 // movie schema
 var ReviewSchema = new Schema({
-    Movietitle: { type: String, required: true, ref:"Movie" },
+    Movietitle: [{ type: String, required: true, ref:"Movies" }],
     ReviewerName: {type: String, required: true },
     SmallQuote:{type: String, required: true},
     Rating:{type:Number, max:5,min:1, required:true},
