@@ -182,7 +182,11 @@ router.route('/movies/:movie_title')
                 }
                 else if (!movie){
                     return res.status(403).json({succes: false, msg:"Movie title cannot be found"});
-                }                 
+                }
+                else
+                {
+                    return res.status(403).json({succes: false, msg:"Cannot get reviews"});
+                }               
 
 
             })
@@ -313,7 +317,7 @@ router.route('/reviews')
         else
         {
             var review = new Reviews();
-
+            console.log(req.user.id)
             jwt.verify(req.headers.authorization.substring(4),process.env.SECRET_KEY,function(error,ver_res)
             {
                 if(error)
