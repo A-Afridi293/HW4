@@ -149,7 +149,7 @@ router.route('/movies/:movie_title')
                 {
                     from : "reviews",
                     localField:"title",
-                    foreignField: "title",
+                    foreignField: "Movietitle",
                     as: "Movies_reviews"
 
                 }
