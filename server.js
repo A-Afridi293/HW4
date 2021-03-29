@@ -136,22 +136,12 @@ router.route('/movies/:movie_title')
         let reviews = req.query.reviews == "true";
         if(reviews)
         {
-            Movie.findOne({title: req.params.movie_title},function(error,movie)
-            {
-                if (error){
-                    return res.status(403).json({succes: false, msg:"Cannot get reviews"});
-                }
-                else if (!movie){
-                    return res.status(403).json({succes: false, msg:"Movie title cannot be found"});
-                }                 
-
-
-            })
+            
             Movie.aggregate
             ([
 
             {
-                $match :{title:req.body.title}
+                $match :{title:req.params.movie_title}
             },
 
             {
@@ -167,7 +157,7 @@ router.route('/movies/:movie_title')
 
             {
                 $addFields:{
-                    ReviewNum: {$avg: "Movie_Reviews.rating"}
+                    ReviewNum: {$avg: "reviews.rating"}
                 }
             }
 
@@ -178,17 +168,25 @@ router.route('/movies/:movie_title')
                 }
                 else 
                 {
-                    return res.status(200).json({succes: true, msg:"Movie title passed in and its review were.",move:mov});
+                    return res.status(200).json({succes: true, msg:"Movie title passed in and its review were.",movie:movie});
                 }
             })
 
         }
-            Movie.find({},function(error,movies)
+        else
+        {
+            Movie.findOne({title: req.params.movie_title},function(error,movie)
             {
-                if(error){res.send(error);}
-                res.json({Movie:movies});
-            });
-            
+                if (error){
+                    return res.status(403).json({succes: false, msg:"Cannot get reviews"});
+                }
+                else if (!movie){
+                    return res.status(403).json({succes: false, msg:"Movie title cannot be found"});
+                }                 
+
+
+            })
+        }
         
     })
 
