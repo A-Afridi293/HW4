@@ -129,6 +129,20 @@ router.route('/postjwt')
             })
         })
     });
+
+    router.route('/movies')
+    .get(authJwtController.isAuthenticated,function(req,res)
+    {
+        if(true)
+        {
+            Movie.find({},function(err,movies)
+            {
+                if(err){res.send(err);}
+                res.json({Movie:movies});
+            });
+            
+        }
+    })
 router.route('/movies/:movie_title')
     .get(authJwtController.isAuthenticated,function(req,res)
     {
@@ -190,18 +204,7 @@ router.route('/movies/:movie_title')
 
 
             })
-            if(true)
-        {
-            Movie.find({},function(err,movies)
-            {
-                if(err){res.send(err);}
-                res.json({Movie:movies});
-            });
-            
         }
-        }
-
-        
         
     })
 
