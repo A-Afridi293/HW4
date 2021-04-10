@@ -190,7 +190,18 @@ router.route('/movies/:movie_title')
 
 
             })
+            if(true)
+        {
+            Movie.find({},function(err,movies)
+            {
+                if(err){res.send(err);}
+                res.json({Movie:movies});
+            });
+            
         }
+        }
+
+        
         
     })
 
